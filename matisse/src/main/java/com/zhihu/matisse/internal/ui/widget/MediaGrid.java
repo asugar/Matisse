@@ -98,6 +98,7 @@ public class MediaGrid extends SquareFrameLayout implements View.OnClickListener
     }
 
     public void setCheckEnabled(boolean enabled) {
+        setAlpha(enabled ? 1.0f : 0.6f);
         mCheckView.setEnabled(enabled);
     }
 

@@ -83,4 +83,46 @@
         <item name="android:popupBackground">@color/dracula_album_popup_bg</item>
     </style>
 
+
+    //===================================== Theme Axx ==========================================
+
+    <style name="Matisse.AXX" parent="Theme.AppCompat.NoActionBar">
+        <item name="colorPrimary">@color/axx_primary</item>
+        <item name="colorPrimaryDark">@color/axx_primary_dark</item>
+        <item name="toolbar">@style/Toolbar.AXX</item>
+        <item name="album.dropdown.title.color">@color/axx_album_dropdown_title_text</item>
+        <item name="album.dropdown.count.color">@color/axx_album_dropdown_count_text</item>
+        <item name="album.element.color">@android:color/white</item>
+        <item name="album.thumbnail.placeholder">@color/axx_album_dropdown_thumbnail_placeholder
+        </item>
+        <item name="album.emptyView">@drawable/ic_empty_dracula</item>
+        <item name="album.emptyView.textColor">@color/axx_album_empty_view</item>
+        <item name="item.placeholder">@color/axx_item_placeholder</item>
+        <item name="item.checkCircle.backgroundColor">@color/axx_item_checkCircle_backgroundColor
+        </item>
+        <item name="item.checkCircle.borderColor">@color/axx_item_checkCircle_borderColor</item>
+        <item name="page.bg">@color/axx_page_bg</item>
+        <item name="bottomToolbar.bg">@color/axx_bottom_toolbar_bg</item>
+        <item name="bottomToolbar.preview.textColor">@color/dracula_bottom_toolbar_preview</item>
+        <item name="bottomToolbar.apply.textColor">@color/dracula_bottom_toolbar_apply</item>
+        <item name="preview.bottomToolbar.back.textColor">
+            @color/axx_preview_bottom_toolbar_back_text
+        </item>
+        <item name="preview.bottomToolbar.apply.textColor">
+            @color/dracula_preview_bottom_toolbar_apply
+        </item>
+        <item name="android:listPopupWindowStyle">@style/Popup.AXX</item>
+        <item name="listPopupWindowStyle">@style/Popup.AXX</item>
+        <item name="capture.textColor">@color/axx_capture</item>
+    </style>
+
+    <style name="Toolbar.AXX" parent="ThemeOverlay.AppCompat.Dark.ActionBar">
+
+    </style>
+
+    <style name="Popup.AXX" parent="Widget.AppCompat.ListPopupWindow">
+        <item name="android:popupBackground">@color/axx_album_popup_bg</item>
+    </style>
+
+
 </resources>
