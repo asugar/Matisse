@@ -168,6 +168,9 @@ public class AlbumMediaAdapter extends
         }
     }
 
+    /**
+     * check选中回调
+     */
     @Override
     public void onCheckViewClicked(CheckView checkView, Item item, RecyclerView.ViewHolder holder) {
         updateSelectedItem(item, holder);
@@ -176,12 +179,14 @@ public class AlbumMediaAdapter extends
     private void updateSelectedItem(Item item, RecyclerView.ViewHolder holder) {
         if (mSelectionSpec.countable) {
             int checkedNum = mSelectedCollection.checkedNumOf(item);
+            // 不再选中列表里
             if (checkedNum == CheckView.UNCHECKED) {
                 if (assertAddSelection(holder.itemView.getContext(), item)) {
                     mSelectedCollection.add(item);
                     notifyCheckStateChanged();
                 }
             } else {
+                // 在选中列表中
                 mSelectedCollection.remove(item);
                 notifyCheckStateChanged();
             }
@@ -210,6 +215,9 @@ public class AlbumMediaAdapter extends
         return Item.valueOf(cursor).isCapture() ? VIEW_TYPE_CAPTURE : VIEW_TYPE_MEDIA;
     }
 
+    /**
+     * 检查是否到达选中数量上限或者符合选中条件
+     */
     private boolean assertAddSelection(Context context, Item item) {
         IncapableCause cause = mSelectedCollection.isAcceptable(item);
         IncapableCause.handleCause(context, cause);

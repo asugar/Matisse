@@ -145,6 +145,9 @@ public class MediaSelectionFragment extends Fragment implements
         }
     }
 
+    /**
+     * 多媒体点击回调
+     */
     @Override
     public void onMediaClick(Album album, Item item, int adapterPosition) {
         if (mOnMediaClickListener != null) {

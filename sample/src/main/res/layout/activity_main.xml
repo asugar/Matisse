@@ -52,6 +52,32 @@
             android:theme="@style/DraculaOverlay" />
 
         <Button
+            android:id="@+id/axx"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="@dimen/item_margin_horizontal"
+            android:layout_marginTop="16dp"
+            android:layout_marginRight="@dimen/item_margin_horizontal"
+            android:minHeight="56dp"
+            android:text="Axx"
+            android:textAllCaps="false"
+            android:textColor="@android:color/white"
+            android:theme="@style/AxxOverlay" />
+
+        <Button
+            android:id="@+id/only_photo"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="@dimen/item_margin_horizontal"
+            android:layout_marginTop="16dp"
+            android:layout_marginRight="@dimen/item_margin_horizontal"
+            android:minHeight="56dp"
+            android:text="OnlyPhoto"
+            android:textAllCaps="false"
+            android:textColor="@android:color/white"
+            android:theme="@style/AxxOverlay" />
+
+        <Button
             android:id="@+id/only_gif"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"

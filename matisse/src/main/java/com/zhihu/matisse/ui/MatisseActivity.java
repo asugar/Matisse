@@ -26,19 +26,22 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
-import androidx.annotation.Nullable;
-import androidx.fragment.app.Fragment;
-import androidx.appcompat.app.ActionBar;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.Toolbar;
-
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.ActionBar;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
+import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.RecyclerView;
+
+import com.zhihu.matisse.MimeType;
 import com.zhihu.matisse.R;
 import com.zhihu.matisse.internal.entity.Album;
 import com.zhihu.matisse.internal.entity.Item;
@@ -51,15 +54,17 @@ import com.zhihu.matisse.internal.ui.MediaSelectionFragment;
 import com.zhihu.matisse.internal.ui.SelectedPreviewActivity;
 import com.zhihu.matisse.internal.ui.adapter.AlbumMediaAdapter;
 import com.zhihu.matisse.internal.ui.adapter.AlbumsAdapter;
+import com.zhihu.matisse.internal.ui.adapter.ThumbnailAdapter;
 import com.zhihu.matisse.internal.ui.widget.AlbumsSpinner;
 import com.zhihu.matisse.internal.ui.widget.CheckRadioView;
 import com.zhihu.matisse.internal.ui.widget.IncapableDialog;
 import com.zhihu.matisse.internal.utils.MediaStoreCompat;
 import com.zhihu.matisse.internal.utils.PathUtils;
 import com.zhihu.matisse.internal.utils.PhotoMetadataUtils;
-
 import com.zhihu.matisse.internal.utils.SingleMediaScanner;
+
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Main Activity to display albums and media content (images/videos) in each album
@@ -69,7 +74,7 @@ public class MatisseActivity extends AppCompatActivity implements
         AlbumCollection.AlbumCallbacks, AdapterView.OnItemSelectedListener,
         MediaSelectionFragment.SelectionProvider, View.OnClickListener,
         AlbumMediaAdapter.CheckStateListener, AlbumMediaAdapter.OnMediaClickListener,
-        AlbumMediaAdapter.OnPhotoCapture {
+        AlbumMediaAdapter.OnPhotoCapture, ThumbnailAdapter.OnThumbnailClickListener {
 
     public static final String EXTRA_RESULT_SELECTION = "extra_result_selection";
     public static final String EXTRA_RESULT_SELECTION_PATH = "extra_result_selection_path";
@@ -88,6 +93,11 @@ public class MatisseActivity extends AppCompatActivity implements
     private TextView mButtonApply;
     private View mContainer;
     private View mEmptyView;
+    private View mBottomToolbar;
+    private View mLlBottomThumbnail;
+    private RecyclerView mRvThumbnail;
+    private TextView mTvLimitCount;
+    private TextView mTvNext;
 
     private LinearLayout mOriginalLayout;
     private CheckRadioView mOriginal;
@@ -138,6 +148,14 @@ public class MatisseActivity extends AppCompatActivity implements
         mOriginal = findViewById(R.id.original);
         mOriginalLayout.setOnClickListener(this);
 
+        mBottomToolbar = findViewById(R.id.bottom_toolbar);
+        mLlBottomThumbnail = findViewById(R.id.ll_bottom_thumbnail);
+        mRvThumbnail = findViewById(R.id.rv_thumbnail);
+        mTvLimitCount = findViewById(R.id.tv_limit_count);
+        mTvNext = findViewById(R.id.tv_next);
+
+        initBottomViews();
+
         mSelectedCollection.onCreate(savedInstanceState);
         if (savedInstanceState != null) {
             mOriginalEnable = savedInstanceState.getBoolean(CHECK_STATE);
@@ -153,6 +171,26 @@ public class MatisseActivity extends AppCompatActivity implements
         mAlbumCollection.onCreate(this, this);
         mAlbumCollection.onRestoreInstanceState(savedInstanceState);
         mAlbumCollection.loadAlbums();
+    }
+
+    private void initBottomViews() {
+        if (mSpec.isThumbnail) {
+            mLlBottomThumbnail.setVisibility(View.VISIBLE);
+            mBottomToolbar.setVisibility(View.GONE);
+            mRvThumbnail.setAdapter(new ThumbnailAdapter(this, null, this));
+            // 设置限制上传数量
+            if (mSpec.mimeTypeSet.equals(MimeType.ofImage())) {
+                mTvLimitCount.setText(getString(R.string.text_limit_image, mSpec.maxSelectable));
+            } else if (mSpec.mimeTypeSet.equals(MimeType.ofVideo())) {
+                mTvLimitCount.setText(getString(R.string.text_limit_video, mSpec.maxSelectable));
+            } else {
+                mTvLimitCount.setText(getString(R.string.text_limit_default, mSpec.maxSelectable));
+            }
+            mTvNext.setOnClickListener(this);
+        } else {
+            mBottomToolbar.setVisibility(View.VISIBLE);
+            mLlBottomThumbnail.setVisibility(View.GONE);
+        }
     }
 
     @Override
@@ -239,7 +277,8 @@ public class MatisseActivity extends AppCompatActivity implements
                         Intent.FLAG_GRANT_WRITE_URI_PERMISSION | Intent.FLAG_GRANT_READ_URI_PERMISSION);
 
             new SingleMediaScanner(this.getApplicationContext(), path, new SingleMediaScanner.ScanListener() {
-                @Override public void onScanFinish() {
+                @Override
+                public void onScanFinish() {
                     Log.i("SingleMediaScanner", "scan finish!");
                 }
             });
@@ -248,8 +287,9 @@ public class MatisseActivity extends AppCompatActivity implements
     }
 
     private void updateBottomToolbar() {
-
+        refreshThumbnail();
         int selectedCount = mSelectedCollection.count();
+
         if (selectedCount == 0) {
             mButtonPreview.setEnabled(false);
             mButtonApply.setEnabled(false);
@@ -341,9 +381,14 @@ public class MatisseActivity extends AppCompatActivity implements
             if (mSpec.onCheckedListener != null) {
                 mSpec.onCheckedListener.onCheck(mOriginalEnable);
             }
+        } else if (v.getId() == R.id.tv_next) {
+            Toast.makeText(this, "点击下一步", Toast.LENGTH_SHORT).show();
         }
     }
 
+    /**
+     * 文件夹选择的回调
+     */
     @Override
     public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
         mAlbumCollection.setStateCurrentSelection(position);
@@ -401,6 +446,9 @@ public class MatisseActivity extends AppCompatActivity implements
         }
     }
 
+    /**
+     * 选中状态回调
+     */
     @Override
     public void onUpdate() {
         // notify bottom toolbar that check state changed.
@@ -412,6 +460,9 @@ public class MatisseActivity extends AppCompatActivity implements
         }
     }
 
+    /**
+     * 跳转到预览页面
+     */
     @Override
     public void onMediaClick(Album album, Item item, int adapterPosition) {
         Intent intent = new Intent(this, AlbumPreviewActivity.class);
@@ -434,4 +485,30 @@ public class MatisseActivity extends AppCompatActivity implements
         }
     }
 
+    @Override
+    public void onDeleteClick(Item data, int position) {
+        mSelectedCollection.remove(data);
+        refreshThumbnail();
+        refreshMediaGrid();
+    }
+
+    private void refreshMediaGrid() {
+        Fragment fragment = getSupportFragmentManager().findFragmentById(R.id.container);
+        if (fragment != null && fragment instanceof MediaSelectionFragment) {
+            ((MediaSelectionFragment) fragment).refreshMediaGrid();
+        }
+    }
+
+    private void refreshThumbnail() {
+        List<Item> list = mSelectedCollection.asList();
+        if (list.isEmpty()) {
+            mRvThumbnail.setVisibility(View.GONE);
+        } else {
+            mRvThumbnail.setVisibility(View.VISIBLE);
+            RecyclerView.Adapter adapter = mRvThumbnail.getAdapter();
+            if (adapter instanceof ThumbnailAdapter) {
+                ((ThumbnailAdapter) adapter).refreshDatas(list);
+            }
+        }
+    }
 }

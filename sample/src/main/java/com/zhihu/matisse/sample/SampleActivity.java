@@ -39,14 +39,18 @@ import com.zhihu.matisse.engine.impl.GlideEngine;
 import com.zhihu.matisse.engine.impl.PicassoEngine;
 import com.zhihu.matisse.filter.Filter;
 import com.zhihu.matisse.internal.entity.CaptureStrategy;
+import com.zhihu.matisse.internal.utils.MediaStoreCompat;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class SampleActivity extends AppCompatActivity implements View.OnClickListener {
 
     private static final int REQUEST_CODE_CHOOSE = 23;
+    private static final int REQUEST_CODE_CAPTURE = 24;
 
     private UriAdapter mAdapter;
+    private MediaStoreCompat mMediaStoreCompat;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -54,6 +58,8 @@ public class SampleActivity extends AppCompatActivity implements View.OnClickLis
         setContentView(R.layout.activity_main);
         findViewById(R.id.zhihu).setOnClickListener(this);
         findViewById(R.id.dracula).setOnClickListener(this);
+        findViewById(R.id.axx).setOnClickListener(this);
+        findViewById(R.id.only_photo).setOnClickListener(this);
         findViewById(R.id.only_gif).setOnClickListener(this);
 
         RecyclerView recyclerView = (RecyclerView) findViewById(R.id.recyclerview);
@@ -118,6 +124,32 @@ public class SampleActivity extends AppCompatActivity implements View.OnClickLis
                         .imageEngine(new PicassoEngine())
                         .forResult(REQUEST_CODE_CHOOSE);
                 break;
+            case R.id.axx:
+                Matisse.from(SampleActivity.this)
+                        .choose(MimeType.ofImage(), false)
+                        .showSingleMediaType(true)
+                        .isThumbnail(true)
+                        .theme(R.style.Matisse_AXX)
+                        .countable(true)
+                        .addFilter(new GifSizeFilter(320, 320, 5 * Filter.K * Filter.K))
+                        .maxSelectable(23)
+                        .originalEnable(false)
+                        .maxOriginalSize(10)
+                        .autoHideToolbarOnSingleTap(true)
+                        .setOnSelectedListener((uriList, pathList) -> {
+                            Log.e("onSelected", "onSelected: pathList=" + pathList);
+                        })
+                        .imageEngine(new PicassoEngine())
+                        .forResult(REQUEST_CODE_CHOOSE);
+                break;
+            case R.id.only_photo:
+                Toast.makeText(this, "only_photo", Toast.LENGTH_SHORT).show();
+                if (mMediaStoreCompat == null) {
+                    mMediaStoreCompat = new MediaStoreCompat(this);
+                    mMediaStoreCompat.setCaptureStrategy(new CaptureStrategy(true, "com.zhihu.matisse.sample.fileprovider", "test"));
+                }
+                mMediaStoreCompat.dispatchCaptureIntent(this, REQUEST_CODE_CAPTURE);
+                break;
             case R.id.only_gif:
                 Matisse.from(SampleActivity.this)
                         .choose(MimeType.of(MimeType.GIF), false)
@@ -147,6 +179,18 @@ public class SampleActivity extends AppCompatActivity implements View.OnClickLis
         if (requestCode == REQUEST_CODE_CHOOSE && resultCode == RESULT_OK) {
             mAdapter.setData(Matisse.obtainResult(data), Matisse.obtainPathResult(data));
             Log.e("OnActivityResult ", String.valueOf(Matisse.obtainOriginalState(data)));
+        } else if (requestCode == REQUEST_CODE_CAPTURE && resultCode == RESULT_OK) {
+            Uri contentUri = mMediaStoreCompat.getCurrentPhotoUri();
+            String path = mMediaStoreCompat.getCurrentPhotoPath();
+            ArrayList<Uri> selected = new ArrayList<>();
+            selected.add(contentUri);
+            ArrayList<String> selectedPath = new ArrayList<>();
+            selectedPath.add(path);
+            mAdapter.setData(selected, selectedPath);
+//            Intent result = new Intent();
+//            result.putParcelableArrayListExtra(EXTRA_RESULT_SELECTION, selected);
+//            result.putStringArrayListExtra(EXTRA_RESULT_SELECTION_PATH, selectedPath);
+//            setResult(RESULT_OK, result);
         }
     }
 
