@@ -18,6 +18,7 @@ package com.zhihu.matisse.internal.ui.adapter;
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.database.Cursor;
+import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -33,6 +34,7 @@ import com.zhihu.matisse.internal.entity.SelectionSpec;
 public class AlbumsAdapter extends CursorAdapter {
 
     private final Drawable mPlaceholder;
+    private String mSelectedItem = "";
 
     public AlbumsAdapter(Context context, Cursor c, boolean autoRequery) {
         super(context, c, autoRequery);
@@ -52,6 +54,10 @@ public class AlbumsAdapter extends CursorAdapter {
         ta.recycle();
     }
 
+    public void setSelectedItem(String id) {
+        mSelectedItem = id;
+    }
+
     @Override
     public View newView(Context context, Cursor cursor, ViewGroup parent) {
         return LayoutInflater.from(context).inflate(R.layout.album_list_item, parent, false);
@@ -60,12 +66,26 @@ public class AlbumsAdapter extends CursorAdapter {
     @Override
     public void bindView(View view, Context context, Cursor cursor) {
         Album album = Album.valueOf(cursor);
+
         ((TextView) view.findViewById(R.id.album_name)).setText(album.getDisplayName(context));
-        ((TextView) view.findViewById(R.id.album_media_count)).setText(String.valueOf(album.getCount()));
+        ((TextView) view.findViewById(R.id.album_media_count)).setText(view.getContext().getString(R.string.text_album_media_count, album.getCount()));
 
         // do not need to load animated Gif
         SelectionSpec.getInstance().imageEngine.loadThumbnail(context, context.getResources().getDimensionPixelSize(R
                         .dimen.media_grid_size), mPlaceholder,
                 (ImageView) view.findViewById(R.id.album_cover), album.getCoverUri());
+
+        // 设置选中
+        if (mSelectedItem.equals(album.getId())) {
+            view.findViewById(R.id.iv_select).setVisibility(View.VISIBLE);
+        } else {
+            view.findViewById(R.id.iv_select).setVisibility(View.GONE);
+        }
+        int positon = cursor.getPosition();
+        if (positon % 2 == 0) {
+            view.setBackgroundColor(Color.parseColor("#121026"));
+        } else {
+            view.setBackgroundColor(Color.parseColor("#16132E"));
+        }
     }
 }

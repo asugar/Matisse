@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!--
+<?xml version="1.0" encoding="utf-8"?><!--
   Copyright 2017 Zhihu Inc.
 
   Licensed under the Apache License, Version 2.0 (the "License");
@@ -14,15 +13,18 @@
   See the License for the specific language governing permissions and
   limitations under the License.
   -->
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="@dimen/album_item_height">
+    android:layout_height="@dimen/album_item_height"
+    android:background="@color/axx_page_bg"
+    android:gravity="center_vertical"
+    android:orientation="horizontal">
 
     <com.zhihu.matisse.internal.ui.widget.RoundedRectangleImageView
         android:id="@+id/album_cover"
-        android:layout_width="40dp"
-        android:layout_height="40dp"
-        android:layout_centerVertical="true"
+        android:layout_width="60dp"
+        android:layout_height="60dp"
         android:layout_marginStart="16dp"
         android:layout_marginLeft="16dp" />
 
@@ -30,28 +32,35 @@
         android:id="@+id/album_name"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignTop="@id/album_cover"
-        android:layout_marginStart="8dp"
-        android:layout_toEndOf="@id/album_cover"
+        android:layout_marginStart="12dp"
+        android:layout_marginLeft="12dp"
         android:ellipsize="end"
+        android:maxLength="12"
         android:maxLines="1"
         android:textColor="?attr/album.dropdown.title.color"
         android:textSize="16sp"
-        android:layout_marginLeft="8dp"
-        android:layout_toRightOf="@id/album_cover" />
+        tools:text="最近项目最近项目最近项目最近项目最近项目最近项目最近项目最"
+        tools:textColor="#ffffff" />
 
     <TextView
         android:id="@+id/album_media_count"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignStart="@id/album_name"
-        android:layout_below="@id/album_name"
-        android:layout_marginTop="4dp"
-        android:layout_toEndOf="@id/album_cover"
+        android:layout_weight="1"
         android:ellipsize="end"
         android:maxLines="1"
         android:textColor="?album.dropdown.count.color"
-        android:textSize="14sp"
-        android:layout_alignLeft="@id/album_name"
-        android:layout_toRightOf="@id/album_cover" />
-</RelativeLayout>
+        android:textSize="16sp"
+        tools:text="（123456）"
+        tools:textColor="#99FFFFFF" />
+
+    <ImageView
+        android:id="@+id/iv_select"
+        android:layout_width="26dp"
+        android:layout_height="26dp"
+        android:layout_marginStart="12dp"
+        android:layout_marginLeft="12dp"
+        android:layout_marginEnd="26dp"
+        android:layout_marginRight="26dp"
+        android:src="@drawable/ic_album_item_selected" />
+</LinearLayout>

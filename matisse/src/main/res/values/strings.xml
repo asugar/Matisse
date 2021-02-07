@@ -39,7 +39,8 @@
     <string name="button_original">原图</string>
     <string name="button_sure_default">确定</string>
     <string name="button_sure">确定(%1$d)</string>
-    <string name="text_limit_image">限制上传%d个图片</string>
-    <string name="text_limit_video">限制上传%d个视频</string>
-    <string name="text_limit_default">限制上传%d个文件</string>
+    <string name="text_limit_image">限制上传%1$d个图片</string>
+    <string name="text_limit_video">限制上传%1$d个视频</string>
+    <string name="text_limit_default">限制上传%1$d个文件</string>
+    <string name="text_album_media_count">（%1$d）</string>
 </resources>

@@ -170,8 +170,8 @@
         android:id="@+id/container"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_above="@id/fl_bottom"
         android:layout_below="@id/toolbar"
+        tools:visibility="visible"
         android:visibility="gone" />
 
     <FrameLayout

@@ -32,7 +32,6 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBar;
@@ -356,7 +355,7 @@ public class MatisseActivity extends AppCompatActivity implements
             intent.putExtra(BasePreviewActivity.EXTRA_DEFAULT_BUNDLE, mSelectedCollection.getDataWithBundle());
             intent.putExtra(BasePreviewActivity.EXTRA_RESULT_ORIGINAL_ENABLE, mOriginalEnable);
             startActivityForResult(intent, REQUEST_CODE_PREVIEW);
-        } else if (v.getId() == R.id.button_apply) {
+        } else if (v.getId() == R.id.button_apply || v.getId() == R.id.tv_next) {
             Intent result = new Intent();
             ArrayList<Uri> selectedUris = (ArrayList<Uri>) mSelectedCollection.asListOfUri();
             result.putParcelableArrayListExtra(EXTRA_RESULT_SELECTION, selectedUris);
@@ -381,8 +380,6 @@ public class MatisseActivity extends AppCompatActivity implements
             if (mSpec.onCheckedListener != null) {
                 mSpec.onCheckedListener.onCheck(mOriginalEnable);
             }
-        } else if (v.getId() == R.id.tv_next) {
-            Toast.makeText(this, "点击下一步", Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -398,6 +395,7 @@ public class MatisseActivity extends AppCompatActivity implements
             album.addCaptureCount();
         }
         onAlbumSelected(album);
+        mAlbumsAdapter.setSelectedItem(album.getId());
     }
 
     @Override

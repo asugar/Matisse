@@ -49,27 +49,6 @@ public class ThumbnailAdapter extends RecyclerView.Adapter<ThumbnailAdapter.Thum
         notifyDataSetChanged();
     }
 
-    /**
-     * 刷新添加
-     */
-    public void addItem(Item data) {
-        mDatas.add(data);
-        notifyItemInserted(mDatas.size() - 1);
-//        notifyDataSetChanged();
-    }
-
-    /**
-     * 刷新删除
-     */
-    public void deleteItem(Item data, int position) {
-        mDatas.remove(data);
-        notifyItemRemoved(position);
-    }
-
-    public void registerThumbnailClickListener(OnThumbnailClickListener listener) {
-        mListener = listener;
-    }
-
     public interface OnThumbnailClickListener {
         void onDeleteClick(Item data, int position);
     }

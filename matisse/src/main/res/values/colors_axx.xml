@@ -20,8 +20,8 @@
     <color name="axx_primary_dark">#0F1126</color>
 
     <color name="axx_album_popup_bg">#34474E</color>
-    <color name="axx_album_dropdown_title_text">#DEFFFFFF</color>
-    <color name="axx_album_dropdown_count_text">#89FFFFFF</color>
+    <color name="axx_album_dropdown_title_text">#FFFFFF</color>
+    <color name="axx_album_dropdown_count_text">#99FFFFFF</color>
     <color name="axx_album_dropdown_thumbnail_placeholder">#455A64</color>
     <color name="axx_album_empty_view">#4DFFFFFF</color>
 

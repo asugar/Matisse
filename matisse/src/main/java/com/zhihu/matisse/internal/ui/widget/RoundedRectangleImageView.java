@@ -19,8 +19,9 @@ import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Path;
 import android.graphics.RectF;
-import androidx.appcompat.widget.AppCompatImageView;
 import android.util.AttributeSet;
+
+import androidx.appcompat.widget.AppCompatImageView;
 
 public class RoundedRectangleImageView extends AppCompatImageView {
 
@@ -45,7 +46,7 @@ public class RoundedRectangleImageView extends AppCompatImageView {
 
     private void init(Context context) {
         float density = context.getResources().getDisplayMetrics().density;
-        mRadius = 2.0f * density;
+        mRadius = 4.0f * density;
         mRoundedRectPath = new Path();
         mRectF = new RectF();
     }
