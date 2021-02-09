@@ -29,6 +29,7 @@ import android.widget.TextView;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.interpolator.view.animation.FastOutSlowInInterpolator;
+import androidx.recyclerview.widget.RecyclerView;
 import androidx.viewpager.widget.ViewPager;
 
 import com.zhihu.matisse.R;
@@ -37,6 +38,7 @@ import com.zhihu.matisse.internal.entity.Item;
 import com.zhihu.matisse.internal.entity.SelectionSpec;
 import com.zhihu.matisse.internal.model.SelectedItemCollection;
 import com.zhihu.matisse.internal.ui.adapter.PreviewPagerAdapter;
+import com.zhihu.matisse.internal.ui.adapter.ThumbnailAdapter;
 import com.zhihu.matisse.internal.ui.widget.CheckRadioView;
 import com.zhihu.matisse.internal.ui.widget.CheckView;
 import com.zhihu.matisse.internal.ui.widget.IncapableDialog;
@@ -44,8 +46,10 @@ import com.zhihu.matisse.internal.utils.PhotoMetadataUtils;
 import com.zhihu.matisse.internal.utils.Platform;
 import com.zhihu.matisse.listener.OnFragmentInteractionListener;
 
+import java.util.List;
+
 public abstract class BasePreviewActivity extends AppCompatActivity implements View.OnClickListener,
-        ViewPager.OnPageChangeListener, OnFragmentInteractionListener {
+        ViewPager.OnPageChangeListener, OnFragmentInteractionListener, ThumbnailAdapter.OnThumbnailClickListener {
 
     public static final String EXTRA_DEFAULT_BUNDLE = "extra_default_bundle";
     public static final String EXTRA_RESULT_BUNDLE = "extra_result_bundle";
@@ -71,8 +75,9 @@ public abstract class BasePreviewActivity extends AppCompatActivity implements V
     private CheckRadioView mOriginal;
     protected boolean mOriginalEnable;
 
-    private FrameLayout mBottomToolbar;
+    private LinearLayout mBottomToolbar;
     private FrameLayout mTopToolbar;
+    private RecyclerView mRvThumbnail;
     private boolean mIsToolbarHide = false;
 
     @Override
@@ -113,9 +118,10 @@ public abstract class BasePreviewActivity extends AppCompatActivity implements V
         mPager.setAdapter(mAdapter);
         mCheckView = (CheckView) findViewById(R.id.check_view);
         mTvCheckHint = (TextView) findViewById(R.id.tv_check_hint);
-        mCheckView.setCountable(mSpec.countable);
+        mCheckView.setCountable(mSpec.countable && !mSpec.isThumbnail);
         mBottomToolbar = findViewById(R.id.bottom_toolbar);
         mTopToolbar = findViewById(R.id.top_toolbar);
+        mRvThumbnail = findViewById(R.id.rv_thumbnail);
 
         mCheckView.setOnClickListener(new View.OnClickListener() {
 
@@ -124,7 +130,7 @@ public abstract class BasePreviewActivity extends AppCompatActivity implements V
                 Item item = mAdapter.getMediaItem(mPager.getCurrentItem());
                 if (mSelectedCollection.isSelected(item)) {
                     mSelectedCollection.remove(item);
-                    if (mSpec.countable) {
+                    if (mSpec.countable && !mSpec.isThumbnail) {
                         mCheckView.setCheckedNum(CheckView.UNCHECKED);
                     } else {
                         mCheckView.setChecked(false);
@@ -133,7 +139,7 @@ public abstract class BasePreviewActivity extends AppCompatActivity implements V
                 } else {
                     if (assertAddSelection(item)) {
                         mSelectedCollection.add(item);
-                        if (mSpec.countable) {
+                        if (mSpec.countable && !mSpec.isThumbnail) {
                             mCheckView.setCheckedNum(mSelectedCollection.checkedNumOf(item));
                         } else {
                             mCheckView.setChecked(true);
@@ -142,6 +148,7 @@ public abstract class BasePreviewActivity extends AppCompatActivity implements V
                     }
                 }
                 updateApplyButton();
+                refreshThumbnail();
 
                 if (mSpec.onSelectedListener != null) {
                     mSpec.onSelectedListener.onSelected(
@@ -179,8 +186,11 @@ public abstract class BasePreviewActivity extends AppCompatActivity implements V
             }
         });
 
+        mRvThumbnail.setAdapter(new ThumbnailAdapter(this, null, this));
+
         updateApplyButton();
     }
+
 
     @Override
     protected void onSaveInstanceState(Bundle outState) {
@@ -247,7 +257,7 @@ public abstract class BasePreviewActivity extends AppCompatActivity implements V
             ((PreviewItemFragment) adapter.instantiateItem(mPager, mPreviousPos)).resetView();
 
             Item item = adapter.getMediaItem(position);
-            if (mSpec.countable) {
+            if (mSpec.countable && !mSpec.isThumbnail) {
                 int checkedNum = mSelectedCollection.checkedNumOf(item);
                 mCheckView.setCheckedNum(checkedNum);
                 if (checkedNum > 0) {
@@ -368,5 +378,36 @@ public abstract class BasePreviewActivity extends AppCompatActivity implements V
         IncapableCause cause = mSelectedCollection.isAcceptable(item);
         IncapableCause.handleCause(this, cause);
         return cause == null;
+    }
+
+    @Override
+    public void onDeleteClick(Item data, int position) {
+        mSelectedCollection.remove(data);
+        refreshThumbnail();
+        updateApplyButton();
+        // 更新checkView状态
+        Item item = mAdapter.getMediaItem(mPager.getCurrentItem());
+        if (!mSelectedCollection.isSelected(item)) {
+            mCheckView.setChecked(false);
+            mTvCheckHint.setText(R.string.text_check_hint_unselected);
+        }
+
+        if (mSpec.onSelectedListener != null) {
+            mSpec.onSelectedListener.onSelected(
+                    mSelectedCollection.asListOfUri(), mSelectedCollection.asListOfString());
+        }
+    }
+
+    protected void refreshThumbnail() {
+        List<Item> list = mSelectedCollection.asList();
+        if (list.isEmpty()) {
+            mRvThumbnail.setVisibility(View.GONE);
+        } else {
+            mRvThumbnail.setVisibility(View.VISIBLE);
+            RecyclerView.Adapter adapter = mRvThumbnail.getAdapter();
+            if (adapter instanceof ThumbnailAdapter) {
+                ((ThumbnailAdapter) adapter).refreshDatas(list);
+            }
+        }
     }
 }
