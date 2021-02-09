@@ -490,6 +490,10 @@ public class MatisseActivity extends AppCompatActivity implements
         refreshMediaGrid();
     }
 
+    @Override
+    public void onItemClick(Item data, int position) {
+    }
+
     private void refreshMediaGrid() {
         Fragment fragment = getSupportFragmentManager().findFragmentById(R.id.container);
         if (fragment != null && fragment instanceof MediaSelectionFragment) {

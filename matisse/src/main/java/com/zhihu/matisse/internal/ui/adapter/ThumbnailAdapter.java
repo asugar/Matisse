@@ -51,6 +51,8 @@ public class ThumbnailAdapter extends RecyclerView.Adapter<ThumbnailAdapter.Thum
 
     public interface OnThumbnailClickListener {
         void onDeleteClick(Item data, int position);
+
+        void onItemClick(Item data, int position);
     }
 
     @NonNull
@@ -68,6 +70,11 @@ public class ThumbnailAdapter extends RecyclerView.Adapter<ThumbnailAdapter.Thum
         holder.mIvDelete.setOnClickListener(v -> {
             if (mListener != null) {
                 mListener.onDeleteClick(data, position);
+            }
+        });
+        holder.itemView.setOnClickListener(v -> {
+            if (mListener != null) {
+                mListener.onItemClick(data, position);
             }
         });
     }

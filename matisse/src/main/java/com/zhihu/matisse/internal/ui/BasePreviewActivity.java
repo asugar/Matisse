@@ -398,6 +398,13 @@ public abstract class BasePreviewActivity extends AppCompatActivity implements V
         }
     }
 
+    @Override
+    public void onItemClick(Item data, int position) {
+        Item selectItem = mSelectedCollection.asList().get(position);
+        int fixPos = mAdapter.getAll().indexOf(selectItem);
+        mPager.setCurrentItem(fixPos, false);
+    }
+
     protected void refreshThumbnail() {
         List<Item> list = mSelectedCollection.asList();
         if (list.isEmpty()) {
