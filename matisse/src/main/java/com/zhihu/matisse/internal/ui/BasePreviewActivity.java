@@ -19,15 +19,17 @@ import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
-import androidx.annotation.Nullable;
-import androidx.viewpager.widget.ViewPager;
-import androidx.interpolator.view.animation.FastOutSlowInInterpolator;
-import androidx.appcompat.app.AppCompatActivity;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.FrameLayout;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.interpolator.view.animation.FastOutSlowInInterpolator;
+import androidx.viewpager.widget.ViewPager;
 
 import com.zhihu.matisse.R;
 import com.zhihu.matisse.internal.entity.IncapableCause;
@@ -58,7 +60,8 @@ public abstract class BasePreviewActivity extends AppCompatActivity implements V
     protected PreviewPagerAdapter mAdapter;
 
     protected CheckView mCheckView;
-    protected TextView mButtonBack;
+    protected TextView mTvCheckHint;
+    protected ImageView mButtonBack;
     protected TextView mButtonApply;
     protected TextView mSize;
 
@@ -98,7 +101,7 @@ public abstract class BasePreviewActivity extends AppCompatActivity implements V
             mSelectedCollection.onCreate(savedInstanceState);
             mOriginalEnable = savedInstanceState.getBoolean(CHECK_STATE);
         }
-        mButtonBack = (TextView) findViewById(R.id.button_back);
+        mButtonBack = (ImageView) findViewById(R.id.button_back);
         mButtonApply = (TextView) findViewById(R.id.button_apply);
         mSize = (TextView) findViewById(R.id.size);
         mButtonBack.setOnClickListener(this);
@@ -109,6 +112,7 @@ public abstract class BasePreviewActivity extends AppCompatActivity implements V
         mAdapter = new PreviewPagerAdapter(getSupportFragmentManager(), null);
         mPager.setAdapter(mAdapter);
         mCheckView = (CheckView) findViewById(R.id.check_view);
+        mTvCheckHint = (TextView) findViewById(R.id.tv_check_hint);
         mCheckView.setCountable(mSpec.countable);
         mBottomToolbar = findViewById(R.id.bottom_toolbar);
         mTopToolbar = findViewById(R.id.top_toolbar);
@@ -125,6 +129,7 @@ public abstract class BasePreviewActivity extends AppCompatActivity implements V
                     } else {
                         mCheckView.setChecked(false);
                     }
+                    mTvCheckHint.setText(R.string.text_check_hint_unselected);
                 } else {
                     if (assertAddSelection(item)) {
                         mSelectedCollection.add(item);
@@ -133,6 +138,7 @@ public abstract class BasePreviewActivity extends AppCompatActivity implements V
                         } else {
                             mCheckView.setChecked(true);
                         }
+                        mTvCheckHint.setText(R.string.text_check_hint_selected);
                     }
                 }
                 updateApplyButton();
@@ -259,6 +265,7 @@ public abstract class BasePreviewActivity extends AppCompatActivity implements V
                 }
             }
             updateSize(item);
+            updateCheckHint(item);
         }
         mPreviousPos = position;
     }
@@ -266,6 +273,14 @@ public abstract class BasePreviewActivity extends AppCompatActivity implements V
     @Override
     public void onPageScrollStateChanged(int state) {
 
+    }
+
+    protected void updateCheckHint(Item item) {
+        if (mSelectedCollection.isSelected(item)) {
+            mTvCheckHint.setText(R.string.text_check_hint_selected);
+        } else {
+            mTvCheckHint.setText(R.string.text_check_hint_unselected);
+        }
     }
 
     private void updateApplyButton() {
@@ -288,7 +303,6 @@ public abstract class BasePreviewActivity extends AppCompatActivity implements V
             mOriginalLayout.setVisibility(View.GONE);
         }
     }
-
 
     private void updateOriginalState() {
         mOriginal.setChecked(mOriginalEnable);

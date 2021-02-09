@@ -14,14 +14,12 @@
   See the License for the specific language governing permissions and
   limitations under the License.
   -->
-<resources
-    xmlns:tools="http://schemas.android.com/tools"
-    tools:ignore="MissingTranslation">
+<resources xmlns:tools="http://schemas.android.com/tools" tools:ignore="MissingTranslation">
     <string name="album_name_all">全部</string>
 
     <string name="button_preview">预览</string>
-    <string name="button_apply_default">使用</string>
-    <string name="button_apply">使用(%1$d)</string>
+    <string name="button_apply_default">下一步</string>
+    <string name="button_apply">下一步(%1$d)</string>
     <string name="button_back">返回</string>
     <string name="photo_grid_capture">拍一张</string>
     <string name="empty_text">还没有图片或视频</string>
@@ -39,8 +37,11 @@
     <string name="button_original">原图</string>
     <string name="button_sure_default">确定</string>
     <string name="button_sure">确定(%1$d)</string>
+
     <string name="text_limit_image">限制上传%1$d个图片</string>
     <string name="text_limit_video">限制上传%1$d个视频</string>
     <string name="text_limit_default">限制上传%1$d个文件</string>
     <string name="text_album_media_count">（%1$d）</string>
+    <string name="text_check_hint_unselected">选择</string>
+    <string name="text_check_hint_selected">已选</string>
 </resources>

@@ -17,6 +17,7 @@ package com.zhihu.matisse.internal.ui;
 
 import android.database.Cursor;
 import android.os.Bundle;
+
 import androidx.annotation.Nullable;
 
 import com.zhihu.matisse.internal.entity.Album;
@@ -57,6 +58,7 @@ public class AlbumPreviewActivity extends BasePreviewActivity implements
             mCheckView.setChecked(mSelectedCollection.isSelected(item));
         }
         updateSize(item);
+        updateCheckHint(item);
     }
 
     @Override
